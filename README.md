@@ -35,7 +35,6 @@ These features are listed below. Let me know if you are interested of them so I 
 * GetProjectStatuses
 * GetStatusReport
 * GetStatusReports
-* GetSystemConfig
 * GetTimesheet
 * GetTimesheetSubmissions
 * GetTimesheetSubmissionTimesheets
