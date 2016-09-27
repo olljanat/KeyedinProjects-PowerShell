@@ -163,14 +163,19 @@ Function Get-Tasks {
       <FilterDTO xmlns=`"http://www.keyedin.com/`" xmlns:i=`"http://www.w3.org/2001/XMLSchema-instance`">
         <FilterItems>
           <FilterItemDTO>
-            <Field>Date</Field>
+            <Field>FinishDate</Field>
             <Operator>LessThanOrEqualTo</Operator>
             <Value>$EndDateString</Value>
           </FilterItemDTO>
           <FilterItemDTO>
-            <Field>Date</Field>
+            <Field>StartDate</Field>
             <Operator>GreaterThanOrEqualTo</Operator>
             <Value>$StartDateString</Value>
+          </FilterItemDTO>
+          <FilterItemDTO>
+            <Field>IsActive</Field>
+            <Operator>EqualTo</Operator>
+            <Value>true</Value>
           </FilterItemDTO>
           <FilterItemDTO>
             <Field>ResourceCode</Field>
