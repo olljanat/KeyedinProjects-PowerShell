@@ -31,7 +31,7 @@ ForEach ($Project in $ActiveProjects) {
 $ProjectTaskArray | Select-Object ProjectCode,ProjectDescription,TaskKey,TaskDescription | Export-Csv .\ProjectTaskArray.csv -Delimiter ";" -Encoding UTF8 -NoTypeInformation
 
 # Add timesheet
-Add-KeyedinTimesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
+Add-KeyedinTimesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -IsOvertime $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
 
 # Do logout
 Invoke-KeyedinLogout

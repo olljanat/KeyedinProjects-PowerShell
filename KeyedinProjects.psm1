@@ -269,6 +269,9 @@ Function Add-KeyedinTimesheet {
     .PARAMETER IsChargeable
         Is this activity chargeable or not?
 		
+    .PARAMETER IsOvertime
+        Is this activity overtime or not?
+		
     .PARAMETER ProjectCode
         Code of project. You can find it from Get-Projects
 		
@@ -276,13 +279,14 @@ Function Add-KeyedinTimesheet {
         Date when activity is done.
 		
     .EXAMPLE
-        Add-KeyedinTimesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
+        Add-KeyedinTimesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -IsOvertime $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
     #>
 	param (
 		[Parameter(Mandatory=$true)][string]$ActivityCode,
 		[Parameter(Mandatory=$true)][string]$TaskKey,
 		[Parameter(Mandatory=$true)][double]$HoursDecimal,
 		[Parameter(Mandatory=$true)][bool]$IsChargeable,
+		[Parameter(Mandatory=$true)][bool]$IsOvertime,
 		[Parameter(Mandatory=$true)][string]$ProjectCode,
 		[Parameter(Mandatory=$true)][DateTime]$TimesheetDate
 	)
@@ -293,6 +297,12 @@ Function Add-KeyedinTimesheet {
 		$IsChargeableString = "true"
 	} Else {
 		$IsChargeableString = "false"
+	}
+	
+	If ($IsOvertime -eq $True) {
+		$IsOvertimeString = "true"
+	} Else {
+		$IsOvertimeString = "false"
 	}
 	
 	$InsertOrAmendTimesheetRequest = @"
@@ -307,7 +317,7 @@ Function Add-KeyedinTimesheet {
         <HoursAndMinutes i:nil="true" />
         <HoursDecimal>$HoursDecimalString</HoursDecimal>
         <IsChargeable>$IsChargeableString</IsChargeable>
-        <IsOvertime>false</IsOvertime>
+        <IsOvertime>$IsOvertimeString</IsOvertime>
         <IsSubmitted>false</IsSubmitted>
         <Key>-1</Key>
         <LastEditDate>0001-01-01T00:00:00</LastEditDate>
