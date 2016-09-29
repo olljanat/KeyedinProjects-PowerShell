@@ -15,7 +15,7 @@ $global:RequestHeader = @"
 "@
 $global:RequestFooter = "</Body></Envelope>"
 
-Function Invoke-Login {
+Function Invoke-KeyedinLogin {
     <#
     .SYNOPSIS
         Invoke login to Keyedin Projects mobile API
@@ -30,7 +30,7 @@ Function Invoke-Login {
         Your Keyedin Projects server. Options are "Europe", "USA" and your own installation server name with http:// or https:// -prefix.
 		
     .EXAMPLE
-        Invoke-Login -UserName "john.doe@example.com" -Password "PASSWORD" -Server "Europe"
+        Invoke-KeyedinLogin -UserName "john.doe@example.com" -Password "PASSWORD" -Server "Europe"
     #>
 	param (
 		[Parameter(Mandatory=$true)][string]$UserName,
@@ -61,13 +61,13 @@ Function Invoke-Login {
 	}
 }
 
-Function Invoke-Logout {
+Function Invoke-KeyedinLogout {
     <#
     .SYNOPSIS
         Invoke logout from Keyedin Projects mobile API
 
     .EXAMPLE
-        Invoke-Logout
+        Invoke-KeyedinLogout
     #>
 	$LogoutRequest = "<key:Logout />"
 	$Request = $RequestHeader + $LogoutRequest + $RequestFooter
@@ -79,13 +79,13 @@ Function Invoke-Logout {
 	return $ResultXML.Envelope.Body.LogoutResponse.LogoutResult.Succeeded
 }
 
-Function Get-SystemConfig {
+Function Get-KeyedinSystemConfig {
     <#
     .SYNOPSIS
         Get your Keyedin Projects settings.
 
     .EXAMPLE
-        Get-SystemConfig
+        Get-KeyedinSystemConfig
     #>
 	$SystemConfigRequest = '<key:GetSystemConfig />'
 	$Request = $RequestHeader + $SystemConfigRequest + $RequestFooter
@@ -97,13 +97,13 @@ Function Get-SystemConfig {
 	return $ResultXML.Envelope.Body.GetSystemConfigResponse.GetSystemConfigResult
 }
 
-Function Get-Projects {
+Function Get-KeyedinProjects {
     <#
     .SYNOPSIS
         Get your projects.
 
     .EXAMPLE
-        Get-Projects
+        Get-KeyedinProjects
     #>
 	$ProjectsRequest = '<key:GetProjects><FilterDTO xmlns="http://www.keyedin.com/" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><FilterItems /></FilterDTO></key:GetProjects>'
 	$Request = $RequestHeader + $ProjectsRequest + $RequestFooter
@@ -115,13 +115,13 @@ Function Get-Projects {
 	return $ResultXML.Envelope.Body.GetProjectsResponse.GetProjectsResult.ProjectDTO
 }
 
-Function Get-Activities {
+Function Get-KeyedinActivities {
     <#
     .SYNOPSIS
         Get your activies.
 
     .EXAMPLE
-        Get-Activities
+        Get-KeyedinActivities
     #>
 	$ActivitiesRequest = '<key:GetActivities><FilterDTO xmlns="http://www.keyedin.com/" xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><FilterItems /></FilterDTO></key:GetActivities>'
 	$Request = $RequestHeader + $ActivitiesRequest + $RequestFooter
@@ -133,7 +133,7 @@ Function Get-Activities {
 	return $ResultXML.Envelope.Body.GetActivitiesResponse.GetActivitiesResult.ActivityDTO
 }
 
-Function Get-Tasks {
+Function Get-KeyedinTasks {
     <#
     .SYNOPSIS
         Get your project tasks
@@ -148,8 +148,8 @@ Function Get-Tasks {
         Your recourse code. Your can find it from Get-SystemConfig response.
 		
     .EXAMPLE
-        $SystemConfig = Get-SystemConfig
-		$Tasks = Get-Tasks -StartDate $(Get-Date -Date "2016-01-01") -EndDate $(Get-Date -Date "2016-12-31") -ResourceCode $SystemConfig.ResourceCode
+        $SystemConfig = Get-KeyedinSystemConfig
+		$Tasks = Get-KeyedinTasks -StartDate $(Get-Date -Date "2016-01-01") -EndDate $(Get-Date -Date "2016-12-31") -ResourceCode $SystemConfig.ResourceCode
     #>
 	param (
 		[Parameter(Mandatory=$true)][DateTime]$StartDate,
@@ -195,7 +195,7 @@ Function Get-Tasks {
 	return $ResultXML.Envelope.Body.GetTasksResponse.GetTasksResult.ProjectTaskDTO
 }
 
-Function Get-Timesheets {
+Function Get-KeyedinTimesheets {
     <#
     .SYNOPSIS
         Get your timesheets
@@ -210,14 +210,16 @@ Function Get-Timesheets {
         Your recourse code. Your can find it from Get-SystemConfig response.
 		
     .EXAMPLE
-        $SystemConfig = Get-SystemConfig
-		$Timesheets = Get-Timesheets -StartDate $(Get-Date -Date "2016-09-01") -EndDate $(Get-Date -Date "2016-09-30") -ResourceCode $SystemConfig.ResourceCode
+        $SystemConfig = Get-KeyedinSystemConfig
+		$Timesheets = Get-KeyedinTimesheets -StartDate $(Get-Date -Date "2016-09-01") -EndDate $(Get-Date -Date "2016-09-30") -ResourceCode $SystemConfig.ResourceCode
     #>
 	param (
-		[Parameter(Mandatory=$true)][string]$StartDate,
-		[Parameter(Mandatory=$true)][string]$EndDate,
+		[Parameter(Mandatory=$true)][DateTime]$StartDate,
+		[Parameter(Mandatory=$true)][DateTime]$EndDate,
 		[Parameter(Mandatory=$true)][string]$ResourceCode
 	)
+	[string]$StartDateString = Get-Date -Date $StartDate -Format "yyyy-MM-dd"
+	[string]$EndDateString = Get-Date -Date $EndDate -Format "yyyy-MM-dd"
 	$TimesheetsRequest = @"
     <key:GetTimesheets>
       <FilterDTO xmlns=`"http://www.keyedin.com/`" xmlns:i=`"http://www.w3.org/2001/XMLSchema-instance`">
@@ -225,12 +227,12 @@ Function Get-Timesheets {
           <FilterItemDTO>
             <Field>Date</Field>
             <Operator>LessThanOrEqualTo</Operator>
-            <Value>$EndDate</Value>
+            <Value>$EndDateString</Value>
           </FilterItemDTO>
           <FilterItemDTO>
             <Field>Date</Field>
             <Operator>GreaterThanOrEqualTo</Operator>
-            <Value>$StartDate</Value>
+            <Value>$StartDateString</Value>
           </FilterItemDTO>
           <FilterItemDTO>
             <Field>ResourceCode</Field>
@@ -250,7 +252,7 @@ Function Get-Timesheets {
 	return $ResultXML.Envelope.Body.GetTimesheetsResponse.GetTimesheetsResult.TimesheetDTO
 }
 
-Function Add-Timesheet {
+Function Add-KeyedinTimesheet {
     <#
     .SYNOPSIS
         Add/extend timesheet.
@@ -274,7 +276,7 @@ Function Add-Timesheet {
         Date when activity is done.
 		
     .EXAMPLE
-        Add-Timesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
+        Add-KeyedinTimesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
     #>
 	param (
 		[Parameter(Mandatory=$true)][string]$ActivityCode,
