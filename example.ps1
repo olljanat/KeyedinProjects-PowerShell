@@ -1,14 +1,14 @@
 Import-Module .\KeyedinProjects.psm1
 
 # Do login
-$AuthenticationToken = Invoke-Login -UserName "john.doe@example.com" -Password "PASSWORD"
+$AuthenticationToken = Invoke-KeyedinLogin -UserName "john.doe@example.com" -Password "PASSWORD"
 
 # Get data
-$SystemConfig = Get-SystemConfig
-$Projects = Get-Projects
-$Activities = Get-Activities
-$Tasks = Get-Tasks -StartDate $(Get-Date -Date "2016-01-01") -EndDate $(Get-Date -Date "2016-12-31") -ResourceCode $SystemConfig.ResourceCode
-$Timesheets = Get-Timesheets -StartDate $(Get-Date -Date "2016-01-01") -EndDate $(Get-Date -Date "2016-12-31") -ResourceCode $SystemConfig.ResourceCode
+$SystemConfig = Get-KeyedinSystemConfig
+$Projects = Get-KeyedinProjects
+$Activities = Get-KeyedinActivities
+$Tasks = Get-KeyedinTasks -StartDate $(Get-Date -Date "2016-01-01") -EndDate $(Get-Date -Date "2016-12-31") -ResourceCode $SystemConfig.ResourceCode
+$Timesheets = Get-KeyedinTimesheets -StartDate $(Get-Date -Date "2016-01-01") -EndDate $(Get-Date -Date "2016-12-31") -ResourceCode $SystemConfig.ResourceCode
 
 
 # Find your activity code
@@ -31,7 +31,7 @@ ForEach ($Project in $ActiveProjects) {
 $ProjectTaskArray | Select-Object ProjectCode,ProjectDescription,TaskKey,TaskDescription | Export-Csv .\ProjectTaskArray.csv -Delimiter ";" -Encoding UTF8 -NoTypeInformation
 
 # Add timesheet
-Add-Timesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
+Add-KeyedinTimesheet -ActivityCode "123" -TaskKey "12345" -HoursDecimal 7.5 -IsChargeable $False -ProjectCode "54321" -TimesheetDate $(Get-Date -Date "2016-01-01")
 
 # Do logout
-Invoke-Logout
+Invoke-KeyedinLogout
