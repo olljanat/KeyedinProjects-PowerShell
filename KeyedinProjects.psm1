@@ -50,6 +50,7 @@ Function Invoke-KeyedinLogin {
 	$Request = $RequestHeader + $LoginRequest + $RequestFooter
 	
 	$Headers = @{"SOAPAction" = "http://www.keyedin.com/IProjectMobileService/Login"}
+	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 	$Result = (Invoke-WebRequest -Uri $URI -ContentType "text/xml" -Headers $Headers -Method POST -Body $Request -UserAgent "")
 	
 	[xml]$ResultXML = $Result.Content
