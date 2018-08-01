@@ -40,8 +40,12 @@ Function Invoke-KeyedinLogin {
 	
 	If ($Server -eq "Europe") {
 		$global:URI = "https://mobile.keyedinprojects.co.uk/mobileservices.svc"
+	} ElseIf ($Server -eq "EuropeV6") {
+		$global:URI = "https://v6mobile.keyedinprojects.co.uk/mobileservices.svc"
 	} ElseIf ($Server -eq "USA") {
 		$global:URI = "https://mobile.keyedinprojects.com/mobileservices.svc"
+	} ElseIf ($Server -eq "USAv6") {
+		$global:URI = "https://v6mobile.keyedinprojects.com/mobileservices.svc"
 	} Else {
 		$global:URI = $Server + "/mobileservices.svc"
 	}
